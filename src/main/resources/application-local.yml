@@ -2,7 +2,7 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/shoe_store}
     username: ${DB_USERNAME:shoe_store}
-    password: ${DB_PASSWORD}
+    password: ${DB_PASSWORD:ShoeStore@2026}
     driver-class-name: org.postgresql.Driver
 
     hikari:
