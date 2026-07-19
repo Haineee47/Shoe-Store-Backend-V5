@@ -1,2 +1,15 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# Normalize text files
+* text=auto
+
+# Maven Wrapper must use Unix line endings on Linux CI
+mvnw text eol=lf
+
+# Windows Maven Wrapper
+mvnw.cmd text eol=crlf
+
+# YAML
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf

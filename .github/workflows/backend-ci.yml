@@ -1,0 +1,72 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17
+
+        env:
+          POSTGRES_DB: shoe_store
+          POSTGRES_USER: shoe_store
+          POSTGRES_PASSWORD: ci_test_password
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U shoe_store -d shoe_store"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      SPRING_PROFILES_ACTIVE: local
+      DB_URL: jdbc:postgresql://localhost:5432/shoe_store
+      DB_USERNAME: shoe_store
+      DB_PASSWORD: ci_test_password
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Grant execute permission for Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Verify Maven Wrapper
+        run: ./mvnw --version
+
+      - name: Build and run tests
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify
