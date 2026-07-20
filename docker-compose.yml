@@ -29,28 +29,6 @@ services:
     networks:
       - shoe_store_network
 
-  pgadmin:
-    image: dpage/pgadmin4:9
-    container_name: shoe-store-pgadmin
-    restart: unless-stopped
-
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
-
-    volumes:
-      - shoe_store_pgadmin_data:/var/lib/pgadmin
-
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-    networks:
-      - shoe_store_network
-
 volumes:
   shoe_store_postgres_data:
     name: shoe-store-postgres-data
