@@ -46,10 +46,10 @@ jobs:
           --health-retries=5
 
     env:
-      SPRING_PROFILES_ACTIVE: local
-      DB_URL: jdbc:postgresql://localhost:5432/shoe_store
-      DB_USERNAME: shoe_store
-      DB_PASSWORD: ci_test_password
+      SPRING_PROFILES_ACTIVE: test
+      TEST_DB_URL: jdbc:postgresql://localhost:5432/shoe_store
+      TEST_DB_USERNAME: shoe_store
+      TEST_DB_PASSWORD: ci_test_password
 
     steps:
       - name: Checkout repository
