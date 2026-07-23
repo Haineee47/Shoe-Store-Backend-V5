@@ -1,14 +1,11 @@
 package com.shoestore.shared.logging;
 
-/**
- * Shared constants used by the logging infrastructure.
- */
+/** Shared constants used by the logging infrastructure. */
 public final class LoggingConstants {
 
-    public static final String REQUEST_ID_HEADER = "X-Request-Id";
+  public static final String REQUEST_ID_HEADER = "X-Request-Id";
 
-    public static final String REQUEST_ID_MDC_KEY = "requestId";
+  public static final String REQUEST_ID_MDC_KEY = "requestId";
 
-    private LoggingConstants() {
-    }
+  private LoggingConstants() {}
 }

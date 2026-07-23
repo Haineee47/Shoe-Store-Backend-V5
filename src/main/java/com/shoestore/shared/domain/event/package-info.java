@@ -1,7 +1,7 @@
 /**
- * Contains domain-level abstractions shared across business modules.
+ * Defines framework-independent contracts for immutable domain events.
  *
- * <p>This package must remain independent of presentation,
- * application orchestration and infrastructure implementations.</p>
+ * <p>Domain events represent completed business facts created by domain behavior. Concrete events
+ * remain owned by their corresponding business modules.
  */
 package com.shoestore.shared.domain.event;

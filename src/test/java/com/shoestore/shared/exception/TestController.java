@@ -8,29 +8,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/test")
 public class TestController {
 
-    @PostMapping("/validation")
-    void validateRequest(@Valid @RequestBody TestRequest request) {
-    }
+  @PostMapping("/validation")
+  void validateRequest(@Valid @RequestBody TestRequest request) {}
 
-    @GetMapping("/method")
-    void methodEndpoint() {
-    }
+  @GetMapping("/method")
+  void methodEndpoint() {}
 
-    @GetMapping("/unexpected")
-    void unexpectedError() {
-        throw new IllegalStateException("Sensitive internal implementation detail");
-    }
+  @GetMapping("/unexpected")
+  void unexpectedError() {
+    throw new IllegalStateException("Sensitive internal implementation detail");
+  }
 
-    @GetMapping("/application-error")
-    void applicationError() {
-        throw new ApplicationException(
-                CommonErrorCode.RESOURCE_NOT_FOUND,
-                "Test resource was not found"
-        );
-    }
+  @GetMapping("/application-error")
+  void applicationError() {
+    throw new ApplicationException(
+        CommonErrorCode.RESOURCE_NOT_FOUND, "Test resource was not found");
+  }
 
-    public record TestRequest(
-            @NotBlank(message = "Name must not be blank")
-            String name
-    ) {}
+  public record TestRequest(@NotBlank(message = "Name must not be blank") String name) {}
 }

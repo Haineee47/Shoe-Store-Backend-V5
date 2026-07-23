@@ -1,12 +1,12 @@
 package com.shoestore.shared.persistence.constraint;
 
-import com.shoestore.shared.persistence.relationship
-        .RelationshipChildTestEntity;
-import com.shoestore.shared.persistence.relationship
-        .RelationshipParentTestEntity;
-import com.shoestore.shared.persistence.relationship
-        .RelationshipParentTestRepository;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.shoestore.shared.persistence.relationship.RelationshipChildTestEntity;
+import com.shoestore.shared.persistence.relationship.RelationshipParentTestEntity;
+import com.shoestore.shared.persistence.relationship.RelationshipParentTestRepository;
 import jakarta.persistence.EntityManager;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,66 +14,61 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 class ConstraintEnforcementIntegrationTest {
 
-    @Autowired
-    private RelationshipParentTestRepository parentRepository;
+  @Autowired private RelationshipParentTestRepository parentRepository;
 
-    @Autowired
-    private EntityManager entityManager;
+  @Autowired private EntityManager entityManager;
 
-    @BeforeEach
-    void setUp() {
-        entityManager.createNativeQuery("""
+  @BeforeEach
+  void setUp() {
+    entityManager
+        .createNativeQuery(
+            """
                 DELETE FROM relationship_child_test_entities
                 """)
-                .executeUpdate();
+        .executeUpdate();
 
-        entityManager.createNativeQuery("""
+    entityManager
+        .createNativeQuery(
+            """
                 DELETE FROM relationship_parent_test_entities
                 """)
-                .executeUpdate();
+        .executeUpdate();
 
-        entityManager.flush();
-        entityManager.clear();
-    }
+    entityManager.flush();
+    entityManager.clear();
+  }
 
-    @Test
-    void shouldRejectDuplicatePositionWithinSameParent() {
-        RelationshipParentTestEntity parent = new RelationshipParentTestEntity("Parent");
+  @Test
+  void shouldRejectDuplicatePositionWithinSameParent() {
+    RelationshipParentTestEntity parent = new RelationshipParentTestEntity("Parent");
 
-        parent.addChild(
-                new RelationshipChildTestEntity(
-                        "Child 1",
-                        0));
+    parent.addChild(new RelationshipChildTestEntity("Child 1", 0));
 
-        parent.addChild(
-                new RelationshipChildTestEntity(
-                        "Child 2",
-                        0));
+    parent.addChild(new RelationshipChildTestEntity("Child 2", 0));
 
-        assertThatThrownBy(
-                () -> parentRepository.saveAndFlush(parent)).isInstanceOf(DataIntegrityViolationException.class);
-    }
+    assertThatThrownBy(() -> parentRepository.saveAndFlush(parent))
+        .isInstanceOf(DataIntegrityViolationException.class);
+  }
 
-    @Test
-    void shouldRejectNegativePositionAtDatabaseLevel() {
-        RelationshipParentTestEntity parent =
-                new RelationshipParentTestEntity("Parent");
+  @Test
+  void shouldRejectNegativePositionAtDatabaseLevel() {
+    RelationshipParentTestEntity parent = new RelationshipParentTestEntity("Parent");
 
-        parentRepository.saveAndFlush(parent);
+    parentRepository.saveAndFlush(parent);
 
-        UUID childId = UUID.randomUUID();
+    UUID childId = UUID.randomUUID();
 
-        assertThatThrownBy(() -> {
-            entityManager.createNativeQuery("""
+    assertThatThrownBy(
+            () -> {
+              entityManager
+                  .createNativeQuery(
+                      """
                     INSERT INTO relationship_child_test_entities (
                         id,
                         version,
@@ -93,11 +88,12 @@ class ConstraintEnforcementIntegrationTest {
                         CURRENT_TIMESTAMP
                     )
                     """)
-                    .setParameter("id", childId)
-                    .setParameter("parentId", parent.getId())
-                    .executeUpdate();
+                  .setParameter("id", childId)
+                  .setParameter("parentId", parent.getId())
+                  .executeUpdate();
 
-            entityManager.flush();
-        }).isInstanceOf(RuntimeException.class);
-    }
+              entityManager.flush();
+            })
+        .isInstanceOf(RuntimeException.class);
+  }
 }

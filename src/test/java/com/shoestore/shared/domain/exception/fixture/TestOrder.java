@@ -1,108 +1,95 @@
 package com.shoestore.shared.domain.exception.fixture;
 
 /**
- * Test-only aggregate fixture used to verify invariant and
- * state-transition conventions.
+ * Test-only aggregate fixture used to verify invariant and state-transition conventions.
  *
- * <p>This class intentionally contains only the minimum behavior required
- * by the architectural tests. It is not a production Order model.</p>
+ * <p>This class intentionally contains only the minimum behavior required by the architectural
+ * tests. It is not a production Order model.
  */
 public final class TestOrder {
 
-    private int totalItemQuantity;
-    private TestOrderStatus status;
+  private int totalItemQuantity;
+  private TestOrderStatus status;
 
-    private TestOrder() {
-        this.totalItemQuantity = 0;
-        this.status = TestOrderStatus.DRAFT;
+  private TestOrder() {
+    this.totalItemQuantity = 0;
+    this.status = TestOrderStatus.DRAFT;
+  }
+
+  public static TestOrder createDraft() {
+    return new TestOrder();
+  }
+
+  public void addItem(int quantity) {
+    ensureModifiable();
+
+    if (quantity <= 0) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_ITEM_QUANTITY_MUST_BE_POSITIVE,
+          "Order item quantity must be greater than zero");
     }
 
-    public static TestOrder createDraft() {
-        return new TestOrder();
+    totalItemQuantity += quantity;
+  }
+
+  public void confirm() {
+    if (status != TestOrderStatus.DRAFT) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_CANNOT_BE_CONFIRMED, "Only a draft order can be confirmed");
     }
 
-    public void addItem(int quantity) {
-        ensureModifiable();
-
-        if (quantity <= 0) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_ITEM_QUANTITY_MUST_BE_POSITIVE,
-                    "Order item quantity must be greater than zero"
-            );
-        }
-
-        totalItemQuantity += quantity;
+    if (totalItemQuantity == 0) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_HAS_NO_ITEMS,
+          "Order must contain at least one item before confirmation");
     }
 
-    public void confirm() {
-        if (status != TestOrderStatus.DRAFT) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_CANNOT_BE_CONFIRMED,
-                    "Only a draft order can be confirmed"
-            );
-        }
+    status = TestOrderStatus.CONFIRMED;
+  }
 
-        if (totalItemQuantity == 0) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_HAS_NO_ITEMS,
-                    "Order must contain at least one item before confirmation"
-            );
-        }
-
-        status = TestOrderStatus.CONFIRMED;
+  public void cancel() {
+    if (status == TestOrderStatus.CANCELLED) {
+      return;
     }
 
-    public void cancel() {
-        if (status == TestOrderStatus.CANCELLED) {
-            return;
-        }
-
-        if (status != TestOrderStatus.DRAFT) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_CANNOT_BE_CANCELLED,
-                    "Only a draft order can be cancelled"
-            );
-        }
-
-        status = TestOrderStatus.CANCELLED;
+    if (status != TestOrderStatus.DRAFT) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_CANNOT_BE_CANCELLED, "Only a draft order can be cancelled");
     }
 
-    public void complete() {
-        if (status == TestOrderStatus.COMPLETED) {
-            return;
-        }
+    status = TestOrderStatus.CANCELLED;
+  }
 
-        if (status != TestOrderStatus.CONFIRMED) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_CANNOT_BE_COMPLETED,
-                    "Only a confirmed order can be completed"
-            );
-        }
-
-        status = TestOrderStatus.COMPLETED;
+  public void complete() {
+    if (status == TestOrderStatus.COMPLETED) {
+      return;
     }
 
-    public int totalItemQuantity() {
-        return totalItemQuantity;
+    if (status != TestOrderStatus.CONFIRMED) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_CANNOT_BE_COMPLETED, "Only a confirmed order can be completed");
     }
 
-    public TestOrderStatus status() {
-        return status;
+    status = TestOrderStatus.COMPLETED;
+  }
+
+  public int totalItemQuantity() {
+    return totalItemQuantity;
+  }
+
+  public TestOrderStatus status() {
+    return status;
+  }
+
+  private void ensureModifiable() {
+    if (status == TestOrderStatus.CONFIRMED) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_ALREADY_CONFIRMED, "A confirmed order cannot be modified");
     }
 
-    private void ensureModifiable() {
-        if (status == TestOrderStatus.CONFIRMED) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_ALREADY_CONFIRMED,
-                    "A confirmed order cannot be modified"
-            );
-        }
-
-        if (status != TestOrderStatus.DRAFT) {
-            throw new TestDomainException(
-                    TestOrderErrorCode.ORDER_CANNOT_BE_MODIFIED,
-                    "Only a draft order can be modified"
-            );
-        }
+    if (status != TestOrderStatus.DRAFT) {
+      throw new TestDomainException(
+          TestOrderErrorCode.ORDER_CANNOT_BE_MODIFIED, "Only a draft order can be modified");
     }
+  }
 }
