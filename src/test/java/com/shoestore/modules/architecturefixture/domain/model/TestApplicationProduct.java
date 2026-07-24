@@ -28,4 +28,12 @@ public final class TestApplicationProduct {
 
     active = true;
   }
+
+  public void deactivate() {
+    if (!active) {
+      throw new IllegalStateException("product is already inactive");
+    }
+
+    active = false;
+  }
 }
