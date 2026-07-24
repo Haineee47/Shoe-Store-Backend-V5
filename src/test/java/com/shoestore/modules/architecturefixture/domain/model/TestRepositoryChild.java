@@ -13,9 +13,7 @@ public final class TestRepositoryChild {
   private final TestRepositoryChildId id;
   private String description;
 
-  public TestRepositoryChild(
-      TestRepositoryChildId id,
-      String description) {
+  public TestRepositoryChild(TestRepositoryChildId id, String description) {
 
     this.id = Objects.requireNonNull(id, "id must not be null");
     this.description = requireDescription(description);
@@ -39,8 +37,7 @@ public final class TestRepositoryChild {
     String normalizedDescription = description.trim();
 
     if (normalizedDescription.isBlank()) {
-      throw new IllegalArgumentException(
-          "description must not be blank");
+      throw new IllegalArgumentException("description must not be blank");
     }
 
     return normalizedDescription;

@@ -26,8 +26,7 @@ class DomainRepositoryBoundaryTest {
 
   @Test
   void aggregateFixtureShouldImplementAggregateRootContract() {
-    assertThat(AggregateRoot.class)
-        .isAssignableFrom(TestRepositoryAggregate.class);
+    assertThat(AggregateRoot.class).isAssignableFrom(TestRepositoryAggregate.class);
 
     assertThat(TestRepositoryAggregate.class.isInterface()).isFalse();
     assertThat(Modifier.isFinal(TestRepositoryAggregate.class.getModifiers())).isTrue();
@@ -42,31 +41,25 @@ class DomainRepositoryBoundaryTest {
 
   @Test
   void domainRepositoryShouldBelongToDomainRepositoryPackage() {
-    assertThat(TestAggregateRepository.class.getPackageName())
-        .endsWith(".domain.repository");
+    assertThat(TestAggregateRepository.class.getPackageName()).endsWith(".domain.repository");
   }
 
   @Test
   void domainRepositoryShouldUseAggregateRootAndTypedDomainValues() throws NoSuchMethodException {
     Method findById =
         TestAggregateRepository.class.getDeclaredMethod(
-            "findById",
-            TestRepositoryAggregateId.class);
+            "findById", TestRepositoryAggregateId.class);
 
     Method findByLookupKey =
         TestAggregateRepository.class.getDeclaredMethod(
-            "findByLookupKey",
-            TestRepositoryLookupKey.class);
+            "findByLookupKey", TestRepositoryLookupKey.class);
 
     Method existsByLookupKey =
         TestAggregateRepository.class.getDeclaredMethod(
-            "existsByLookupKey",
-            TestRepositoryLookupKey.class);
+            "existsByLookupKey", TestRepositoryLookupKey.class);
 
     Method save =
-        TestAggregateRepository.class.getDeclaredMethod(
-            "save",
-            TestRepositoryAggregate.class);
+        TestAggregateRepository.class.getDeclaredMethod("save", TestRepositoryAggregate.class);
 
     assertThat(findById.getReturnType()).isEqualTo(Optional.class);
     assertThat(findById.getGenericReturnType().getTypeName())
@@ -109,8 +102,7 @@ class DomainRepositoryBoundaryTest {
                         Arrays.stream(method.getGenericParameterTypes())
                             .map(type -> type.getTypeName())));
 
-    assertThat(exposedTypeNames)
-        .noneMatch(this::containsForbiddenType);
+    assertThat(exposedTypeNames).noneMatch(this::containsForbiddenType);
   }
 
   private boolean isAllowedDomainRepositoryType(Class<?> type) {

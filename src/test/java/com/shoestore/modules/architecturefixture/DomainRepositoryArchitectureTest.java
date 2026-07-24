@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 class DomainRepositoryArchitectureTest {
 
-  private static final String MODULE_ROOT_PACKAGE =
-      "com.shoestore.modules";
+  private static final String MODULE_ROOT_PACKAGE = "com.shoestore.modules";
 
   private static final String DOMAIN_REPOSITORY_PACKAGE =
       "com.shoestore.modules..domain.repository..";
@@ -33,28 +32,21 @@ class DomainRepositoryArchitectureTest {
   @BeforeAll
   static void importProjectClasses() {
     importedClasses =
-        new ClassFileImporter()
-            .importPackages(
-                "com.shoestore.modules",
-                "com.shoestore.shared");
+        new ClassFileImporter().importPackages("com.shoestore.modules", "com.shoestore.shared");
   }
 
   @Test
   void domainRepositoriesShouldBeInterfaces() {
     classes()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .beInterfaces()
-        .because(
-            "Domain Repositories are domain-owned ports, not concrete implementations")
+        .because("Domain Repositories are domain-owned ports, not concrete implementations")
         .check(importedClasses);
   }
 
@@ -62,21 +54,15 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotDependOnSpring() {
     noClasses()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "org.springframework..",
-            "org.springframework.data..")
-        .because(
-            "Domain Repository contracts must remain independent from Spring and Spring Data")
+        .resideInAnyPackage("org.springframework..", "org.springframework.data..")
+        .because("Domain Repository contracts must remain independent from Spring and Spring Data")
         .check(importedClasses);
   }
 
@@ -84,22 +70,15 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotDependOnPersistenceFrameworks() {
     noClasses()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "jakarta.persistence..",
-            "javax.persistence..",
-            "org.hibernate..")
-        .because(
-            "persistence frameworks belong to infrastructure adapters")
+        .resideInAnyPackage("jakarta.persistence..", "javax.persistence..", "org.hibernate..")
+        .because("persistence frameworks belong to infrastructure adapters")
         .check(importedClasses);
   }
 
@@ -107,21 +86,15 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotDependOnSqlApis() {
     noClasses()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "java.sql..",
-            "javax.sql..")
-        .because(
-            "SQL APIs must not leak into Domain Repository contracts")
+        .resideInAnyPackage("java.sql..", "javax.sql..")
+        .because("SQL APIs must not leak into Domain Repository contracts")
         .check(importedClasses);
   }
 
@@ -129,20 +102,15 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotDependOnSharedPersistence() {
     noClasses()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "com.shoestore.shared.persistence..")
-        .because(
-            "shared persistence abstractions are infrastructure concerns")
+        .resideInAnyPackage("com.shoestore.shared.persistence..")
+        .because("shared persistence abstractions are infrastructure concerns")
         .check(importedClasses);
   }
 
@@ -150,24 +118,16 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotDependOnOuterLayers() {
     noClasses()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
         .resideInAnyPackage(
-            "..application..",
-            "..infrastructure..",
-            "..web..",
-            "..controller..",
-            "..dto..")
-        .because(
-            "Domain Repository dependencies must point inward toward the domain")
+            "..application..", "..infrastructure..", "..web..", "..controller..", "..dto..")
+        .because("Domain Repository dependencies must point inward toward the domain")
         .check(importedClasses);
   }
 
@@ -175,28 +135,20 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoriesShouldNotCarryFrameworkAnnotations() {
     classes()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_PACKAGE)
         .and()
-        .resideOutsideOfPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideOutsideOfPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
-        .notBeAnnotatedWith(
-            Repository.class)
+        .notBeAnnotatedWith(Repository.class)
         .andShould()
-        .notBeAnnotatedWith(
-            Component.class)
+        .notBeAnnotatedWith(Component.class)
         .andShould()
-        .notBeAnnotatedWith(
-            Transactional.class)
+        .notBeAnnotatedWith(Transactional.class)
         .andShould()
-        .notBeAnnotatedWith(
-            NoRepositoryBean.class)
-        .because(
-            "pure Domain Repository ports must not carry framework annotations")
+        .notBeAnnotatedWith(NoRepositoryBean.class)
+        .because("pure Domain Repository ports must not carry framework annotations")
         .check(importedClasses);
   }
 
@@ -204,26 +156,13 @@ class DomainRepositoryArchitectureTest {
   void domainRepositoryContractsShouldBelongToTheirOwnModule() {
     Set<String> violations =
         importedClasses.stream()
-            .filter(
-                this::isDomainRepositoryContract)
+            .filter(this::isDomainRepositoryContract)
             .flatMap(
                 repository ->
-                    repository
-                        .getDirectDependenciesFromSelf()
-                        .stream()
-                        .filter(
-                            dependency ->
-                                violatesModuleOwnership(
-                                    repository,
-                                    dependency))
-                        .map(
-                            dependency ->
-                                formatOwnershipViolation(
-                                    repository,
-                                    dependency)))
-            .collect(
-                Collectors.toCollection(
-                    java.util.LinkedHashSet::new));
+                    repository.getDirectDependenciesFromSelf().stream()
+                        .filter(dependency -> violatesModuleOwnership(repository, dependency))
+                        .map(dependency -> formatOwnershipViolation(repository, dependency)))
+            .collect(Collectors.toCollection(java.util.LinkedHashSet::new));
 
     assertThat(violations)
         .as(
@@ -235,11 +174,9 @@ class DomainRepositoryArchitectureTest {
   void repositorySupportImplementationsShouldRemainSeparated() {
     classes()
         .that()
-        .resideInAPackage(
-            DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
+        .resideInAPackage(DOMAIN_REPOSITORY_SUPPORT_PACKAGE)
         .and()
-        .haveSimpleNameEndingWith(
-            "Repository")
+        .haveSimpleNameEndingWith("Repository")
         .should()
         .notBeInterfaces()
         .because(
@@ -247,97 +184,67 @@ class DomainRepositoryArchitectureTest {
         .check(importedClasses);
   }
 
-  private boolean isDomainRepositoryContract(
-      JavaClass javaClass) {
+  private boolean isDomainRepositoryContract(JavaClass javaClass) {
 
-    String packageName =
-        javaClass.getPackageName();
+    String packageName = javaClass.getPackageName();
 
-    return packageName.startsWith(
-            MODULE_ROOT_PACKAGE + ".")
-        && packageName.contains(
-            ".domain.repository")
-        && !packageName.contains(
-            ".domain.repository.support")
-        && javaClass
-            .getSimpleName()
-            .endsWith("Repository");
+    return packageName.startsWith(MODULE_ROOT_PACKAGE + ".")
+        && packageName.contains(".domain.repository")
+        && !packageName.contains(".domain.repository.support")
+        && javaClass.getSimpleName().endsWith("Repository");
   }
 
-  private boolean violatesModuleOwnership(
-      JavaClass repository,
-      Dependency dependency) {
+  private boolean violatesModuleOwnership(JavaClass repository, Dependency dependency) {
 
-    JavaClass targetClass =
-        dependency.getTargetClass();
+    JavaClass targetClass = dependency.getTargetClass();
 
-    String targetPackage =
-        targetClass.getPackageName();
+    String targetPackage = targetClass.getPackageName();
 
-    if (!targetPackage.startsWith(
-        MODULE_ROOT_PACKAGE + ".")) {
+    if (!targetPackage.startsWith(MODULE_ROOT_PACKAGE + ".")) {
 
       return false;
     }
 
-    String repositoryModule =
-        extractModuleName(
-            repository.getPackageName());
+    String repositoryModule = extractModuleName(repository.getPackageName());
 
-    String targetModule =
-        extractModuleName(
-            targetPackage);
+    String targetModule = extractModuleName(targetPackage);
 
-    if (repositoryModule == null
-        || targetModule == null) {
+    if (repositoryModule == null || targetModule == null) {
 
       return false;
     }
 
-    if (repositoryModule.equals(
-        targetModule)) {
+    if (repositoryModule.equals(targetModule)) {
 
       return false;
     }
 
-    return targetPackage.contains(
-        ".domain.");
+    return targetPackage.contains(".domain.");
   }
 
-  private String extractModuleName(
-      String packageName) {
+  private String extractModuleName(String packageName) {
 
-    String prefix =
-        MODULE_ROOT_PACKAGE + ".";
+    String prefix = MODULE_ROOT_PACKAGE + ".";
 
     if (!packageName.startsWith(prefix)) {
       return null;
     }
 
-    String remaining =
-        packageName.substring(
-            prefix.length());
+    String remaining = packageName.substring(prefix.length());
 
-    int separatorIndex =
-        remaining.indexOf('.');
+    int separatorIndex = remaining.indexOf('.');
 
     if (separatorIndex < 0) {
       return remaining;
     }
 
-    return remaining.substring(
-        0,
-        separatorIndex);
+    return remaining.substring(0, separatorIndex);
   }
 
-  private String formatOwnershipViolation(
-      JavaClass repository,
-      Dependency dependency) {
+  private String formatOwnershipViolation(JavaClass repository, Dependency dependency) {
 
     return repository.getName()
         + " depends on cross-module domain type "
-        + dependency
-            .getTargetClass()
-            .getName();
+        + dependency.getTargetClass().getName();
   }
 }

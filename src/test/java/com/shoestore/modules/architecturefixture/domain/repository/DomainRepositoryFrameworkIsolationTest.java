@@ -26,9 +26,7 @@ class DomainRepositoryFrameworkIsolationTest {
   static void importClasses() {
     importedClasses =
         new ClassFileImporter()
-            .importPackages(
-                "com.shoestore.modules.architecturefixture",
-                "com.shoestore.shared");
+            .importPackages("com.shoestore.modules.architecturefixture", "com.shoestore.shared");
   }
 
   @Test
@@ -42,8 +40,7 @@ class DomainRepositoryFrameworkIsolationTest {
         .haveSimpleNameEndingWith("Repository")
         .should()
         .beInterfaces()
-        .because(
-            "Domain Repositories are domain-owned ports, not implementations")
+        .because("Domain Repositories are domain-owned ports, not implementations")
         .check(importedClasses);
   }
 
@@ -58,11 +55,8 @@ class DomainRepositoryFrameworkIsolationTest {
         .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "org.springframework..",
-            "org.springframework.data..")
-        .because(
-            "Domain Repository contracts must remain independent from Spring and Spring Data")
+        .resideInAnyPackage("org.springframework..", "org.springframework.data..")
+        .because("Domain Repository contracts must remain independent from Spring and Spring Data")
         .check(importedClasses);
   }
 
@@ -77,12 +71,8 @@ class DomainRepositoryFrameworkIsolationTest {
         .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "jakarta.persistence..",
-            "javax.persistence..",
-            "org.hibernate..")
-        .because(
-            "JPA and Hibernate belong to persistence adapters, not Domain Repository ports")
+        .resideInAnyPackage("jakarta.persistence..", "javax.persistence..", "org.hibernate..")
+        .because("JPA and Hibernate belong to persistence adapters, not Domain Repository ports")
         .check(importedClasses);
   }
 
@@ -97,11 +87,8 @@ class DomainRepositoryFrameworkIsolationTest {
         .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "java.sql..",
-            "javax.sql..")
-        .because(
-            "SQL APIs must not leak into Domain Repository contracts")
+        .resideInAnyPackage("java.sql..", "javax.sql..")
+        .because("SQL APIs must not leak into Domain Repository contracts")
         .check(importedClasses);
   }
 
@@ -116,10 +103,8 @@ class DomainRepositoryFrameworkIsolationTest {
         .haveSimpleNameEndingWith("Repository")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage(
-            "com.shoestore.shared.persistence..")
-        .because(
-            "shared.persistence must not be referenced by Domain Repository ports")
+        .resideInAnyPackage("com.shoestore.shared.persistence..")
+        .because("shared.persistence must not be referenced by Domain Repository ports")
         .check(importedClasses);
   }
 
@@ -135,13 +120,8 @@ class DomainRepositoryFrameworkIsolationTest {
         .should()
         .dependOnClassesThat()
         .resideInAnyPackage(
-            "..application..",
-            "..infrastructure..",
-            "..web..",
-            "..controller..",
-            "..dto..")
-        .because(
-            "Domain Repository dependencies must point inward toward the domain")
+            "..application..", "..infrastructure..", "..web..", "..controller..", "..dto..")
+        .because("Domain Repository dependencies must point inward toward the domain")
         .check(importedClasses);
   }
 
@@ -162,8 +142,7 @@ class DomainRepositoryFrameworkIsolationTest {
         .notBeAnnotatedWith(Transactional.class)
         .andShould()
         .notBeAnnotatedWith(NoRepositoryBean.class)
-        .because(
-            "pure Domain Repository ports must not carry framework annotations")
+        .because("pure Domain Repository ports must not carry framework annotations")
         .check(importedClasses);
   }
 }

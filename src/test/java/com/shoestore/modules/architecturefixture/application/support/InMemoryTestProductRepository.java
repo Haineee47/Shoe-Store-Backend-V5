@@ -8,15 +8,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class InMemoryTestProductRepository
-    implements TestApplicationProductRepository {
+public final class InMemoryTestProductRepository implements TestApplicationProductRepository {
 
   private final Map<TestApplicationProductId, TestApplicationProduct> storage =
       new LinkedHashMap<>();
 
   @Override
-  public Optional<TestApplicationProduct> findById(
-      TestApplicationProductId productId) {
+  public Optional<TestApplicationProduct> findById(TestApplicationProductId productId) {
 
     Objects.requireNonNull(productId, "productId must not be null");
 
@@ -24,8 +22,7 @@ public final class InMemoryTestProductRepository
   }
 
   @Override
-  public TestApplicationProduct save(
-      TestApplicationProduct product) {
+  public TestApplicationProduct save(TestApplicationProduct product) {
 
     Objects.requireNonNull(product, "product must not be null");
 

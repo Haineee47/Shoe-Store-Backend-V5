@@ -10,34 +10,25 @@ public final class ActivateTestProductUseCase {
 
   private final TestApplicationProductRepository productRepository;
 
-  public ActivateTestProductUseCase(
-      TestApplicationProductRepository productRepository) {
+  public ActivateTestProductUseCase(TestApplicationProductRepository productRepository) {
 
     this.productRepository =
-        Objects.requireNonNull(
-            productRepository,
-            "productRepository must not be null");
+        Objects.requireNonNull(productRepository, "productRepository must not be null");
   }
 
-  public ActivateTestProductResult execute(
-      ActivateTestProductCommand command) {
+  public ActivateTestProductResult execute(ActivateTestProductCommand command) {
 
     Objects.requireNonNull(command, "command must not be null");
 
     TestApplicationProduct product =
         productRepository
             .findById(command.productId())
-            .orElseThrow(
-                () -> new IllegalArgumentException(
-                    "product was not found"));
+            .orElseThrow(() -> new IllegalArgumentException("product was not found"));
 
     product.activate();
 
-    TestApplicationProduct savedProduct =
-        productRepository.save(product);
+    TestApplicationProduct savedProduct = productRepository.save(product);
 
-    return new ActivateTestProductResult(
-        savedProduct.id(),
-        savedProduct.isActive());
+    return new ActivateTestProductResult(savedProduct.id(), savedProduct.isActive());
   }
 }

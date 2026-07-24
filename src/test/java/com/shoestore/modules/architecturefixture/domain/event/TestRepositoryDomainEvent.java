@@ -6,26 +6,16 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Test-only Domain Event used to verify repository retrieval semantics.
- */
+/** Test-only Domain Event used to verify repository retrieval semantics. */
 public record TestRepositoryDomainEvent(
-    UUID eventId,
-    TestRepositoryAggregateId aggregateId,
-    Instant occurredAt)
+    UUID eventId, TestRepositoryAggregateId aggregateId, Instant occurredAt)
     implements DomainEvent {
 
   public TestRepositoryDomainEvent {
-    Objects.requireNonNull(
-        eventId,
-        "eventId must not be null");
+    Objects.requireNonNull(eventId, "eventId must not be null");
 
-    Objects.requireNonNull(
-        aggregateId,
-        "aggregateId must not be null");
+    Objects.requireNonNull(aggregateId, "aggregateId must not be null");
 
-    Objects.requireNonNull(
-        occurredAt,
-        "occurredAt must not be null");
+    Objects.requireNonNull(occurredAt, "occurredAt must not be null");
   }
 }

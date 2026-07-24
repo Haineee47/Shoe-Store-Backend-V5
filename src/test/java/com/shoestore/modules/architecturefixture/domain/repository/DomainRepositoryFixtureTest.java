@@ -22,49 +22,39 @@ class DomainRepositoryFixtureTest {
 
   @Test
   void shouldSaveAndFindAggregateByTypedIdentity() {
-    TestRepositoryAggregateId aggregateId =
-        new TestRepositoryAggregateId(UUID.randomUUID());
+    TestRepositoryAggregateId aggregateId = new TestRepositoryAggregateId(UUID.randomUUID());
 
     TestRepositoryAggregate aggregate =
         new TestRepositoryAggregate(
-            aggregateId,
-            new TestRepositoryLookupKey("fixture@example.com"));
+            aggregateId, new TestRepositoryLookupKey("fixture@example.com"));
 
     TestRepositoryAggregate savedAggregate = repository.save(aggregate);
 
     assertThat(savedAggregate).isSameAs(aggregate);
-    assertThat(repository.findById(aggregateId))
-        .containsSame(aggregate);
+    assertThat(repository.findById(aggregateId)).containsSame(aggregate);
   }
 
   @Test
   void shouldFindAggregateByDomainLookupValue() {
-    TestRepositoryLookupKey lookupKey =
-        new TestRepositoryLookupKey("fixture@example.com");
+    TestRepositoryLookupKey lookupKey = new TestRepositoryLookupKey("fixture@example.com");
 
     TestRepositoryAggregate aggregate =
-        new TestRepositoryAggregate(
-            new TestRepositoryAggregateId(UUID.randomUUID()),
-            lookupKey);
+        new TestRepositoryAggregate(new TestRepositoryAggregateId(UUID.randomUUID()), lookupKey);
 
     repository.save(aggregate);
 
-    assertThat(repository.findByLookupKey(lookupKey))
-        .containsSame(aggregate);
+    assertThat(repository.findByLookupKey(lookupKey)).containsSame(aggregate);
   }
 
   @Test
   void shouldReportWhetherAggregateExistsByDomainLookupValue() {
-    TestRepositoryLookupKey existingLookupKey =
-        new TestRepositoryLookupKey("existing@example.com");
+    TestRepositoryLookupKey existingLookupKey = new TestRepositoryLookupKey("existing@example.com");
 
-    TestRepositoryLookupKey missingLookupKey =
-        new TestRepositoryLookupKey("missing@example.com");
+    TestRepositoryLookupKey missingLookupKey = new TestRepositoryLookupKey("missing@example.com");
 
     repository.save(
         new TestRepositoryAggregate(
-            new TestRepositoryAggregateId(UUID.randomUUID()),
-            existingLookupKey));
+            new TestRepositoryAggregateId(UUID.randomUUID()), existingLookupKey));
 
     assertThat(repository.existsByLookupKey(existingLookupKey)).isTrue();
     assertThat(repository.existsByLookupKey(missingLookupKey)).isFalse();
@@ -72,11 +62,9 @@ class DomainRepositoryFixtureTest {
 
   @Test
   void shouldReturnEmptyWhenAggregateDoesNotExist() {
-    TestRepositoryAggregateId missingId =
-        new TestRepositoryAggregateId(UUID.randomUUID());
+    TestRepositoryAggregateId missingId = new TestRepositoryAggregateId(UUID.randomUUID());
 
-    TestRepositoryLookupKey missingLookupKey =
-        new TestRepositoryLookupKey("missing@example.com");
+    TestRepositoryLookupKey missingLookupKey = new TestRepositoryLookupKey("missing@example.com");
 
     assertThat(repository.findById(missingId)).isEmpty();
     assertThat(repository.findByLookupKey(missingLookupKey)).isEmpty();
@@ -84,33 +72,25 @@ class DomainRepositoryFixtureTest {
 
   @Test
   void shouldReplaceStoredAggregateWhenSavingSameTypedIdentity() {
-    TestRepositoryAggregateId aggregateId =
-        new TestRepositoryAggregateId(UUID.randomUUID());
+    TestRepositoryAggregateId aggregateId = new TestRepositoryAggregateId(UUID.randomUUID());
 
     TestRepositoryAggregate originalAggregate =
         new TestRepositoryAggregate(
-            aggregateId,
-            new TestRepositoryLookupKey("original@example.com"));
+            aggregateId, new TestRepositoryLookupKey("original@example.com"));
 
     TestRepositoryAggregate replacementAggregate =
         new TestRepositoryAggregate(
-            aggregateId,
-            new TestRepositoryLookupKey("replacement@example.com"));
+            aggregateId, new TestRepositoryLookupKey("replacement@example.com"));
 
     repository.save(originalAggregate);
     repository.save(replacementAggregate);
 
-    assertThat(repository.findById(aggregateId))
-        .containsSame(replacementAggregate);
+    assertThat(repository.findById(aggregateId)).containsSame(replacementAggregate);
 
-    assertThat(
-            repository.existsByLookupKey(
-                new TestRepositoryLookupKey("original@example.com")))
+    assertThat(repository.existsByLookupKey(new TestRepositoryLookupKey("original@example.com")))
         .isFalse();
 
-    assertThat(
-            repository.existsByLookupKey(
-                new TestRepositoryLookupKey("replacement@example.com")))
+    assertThat(repository.existsByLookupKey(new TestRepositoryLookupKey("replacement@example.com")))
         .isTrue();
   }
 
@@ -123,9 +103,7 @@ class DomainRepositoryFixtureTest {
 
     repository.save(aggregate);
 
-    assertThat(
-            repository.findByLookupKey(
-                new TestRepositoryLookupKey("fixture@example.com")))
+    assertThat(repository.findByLookupKey(new TestRepositoryLookupKey("fixture@example.com")))
         .containsSame(aggregate);
   }
 

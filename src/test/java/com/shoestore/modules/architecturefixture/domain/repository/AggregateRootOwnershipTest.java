@@ -20,68 +20,48 @@ class AggregateRootOwnershipTest {
 
   @Test
   void aggregateShouldOwnItsChildEntities() {
-    TestRepositoryChildId childId =
-        new TestRepositoryChildId(UUID.randomUUID());
+    TestRepositoryChildId childId = new TestRepositoryChildId(UUID.randomUUID());
 
-    TestRepositoryAggregate aggregate =
-        createAggregate();
+    TestRepositoryAggregate aggregate = createAggregate();
 
-    aggregate.addChild(
-        childId,
-        "Primary child");
+    aggregate.addChild(childId, "Primary child");
 
     assertThat(aggregate.children())
         .singleElement()
         .satisfies(
             child -> {
               assertThat(child.id()).isEqualTo(childId);
-              assertThat(child.description())
-                  .isEqualTo("Primary child");
+              assertThat(child.description()).isEqualTo("Primary child");
             });
   }
 
   @Test
-void childEntityShouldNotBeAnAggregateRoot() {
-  assertThat(
-          AggregateRoot.class.isAssignableFrom(
-              TestRepositoryChild.class))
-      .isFalse();
-}
+  void childEntityShouldNotBeAnAggregateRoot() {
+    assertThat(AggregateRoot.class.isAssignableFrom(TestRepositoryChild.class)).isFalse();
+  }
 
   @Test
-  void childMutationShouldBeControlledByAggregateRoot()
-      throws NoSuchMethodException {
+  void childMutationShouldBeControlledByAggregateRoot() throws NoSuchMethodException {
 
     Method updateDescription =
-        TestRepositoryChild.class.getDeclaredMethod(
-            "updateDescription",
-            String.class);
+        TestRepositoryChild.class.getDeclaredMethod("updateDescription", String.class);
 
-    assertThat(Modifier.isPublic(updateDescription.getModifiers()))
-        .isFalse();
+    assertThat(Modifier.isPublic(updateDescription.getModifiers())).isFalse();
 
-    assertThat(Modifier.isProtected(updateDescription.getModifiers()))
-        .isFalse();
+    assertThat(Modifier.isProtected(updateDescription.getModifiers())).isFalse();
 
-    assertThat(Modifier.isPrivate(updateDescription.getModifiers()))
-        .isFalse();
+    assertThat(Modifier.isPrivate(updateDescription.getModifiers())).isFalse();
   }
 
   @Test
   void aggregateShouldUpdateOwnedChildThroughAggregateBehavior() {
-    TestRepositoryChildId childId =
-        new TestRepositoryChildId(UUID.randomUUID());
+    TestRepositoryChildId childId = new TestRepositoryChildId(UUID.randomUUID());
 
-    TestRepositoryAggregate aggregate =
-        createAggregate();
+    TestRepositoryAggregate aggregate = createAggregate();
 
-    aggregate.addChild(
-        childId,
-        "Original description");
+    aggregate.addChild(childId, "Original description");
 
-    aggregate.updateChildDescription(
-        childId,
-        "Updated description");
+    aggregate.updateChildDescription(childId, "Updated description");
 
     assertThat(aggregate.findChild(childId))
         .get()
@@ -91,55 +71,35 @@ void childEntityShouldNotBeAnAggregateRoot() {
 
   @Test
   void aggregateShouldRejectDuplicateChildIdentity() {
-    TestRepositoryChildId childId =
-        new TestRepositoryChildId(UUID.randomUUID());
+    TestRepositoryChildId childId = new TestRepositoryChildId(UUID.randomUUID());
 
-    TestRepositoryAggregate aggregate =
-        createAggregate();
+    TestRepositoryAggregate aggregate = createAggregate();
 
-    aggregate.addChild(
-        childId,
-        "First child");
+    aggregate.addChild(childId, "First child");
 
     assertThatIllegalArgumentException()
-        .isThrownBy(
-            () ->
-                aggregate.addChild(
-                    childId,
-                    "Duplicate child"))
-        .withMessage(
-            "child with the same identity already exists");
+        .isThrownBy(() -> aggregate.addChild(childId, "Duplicate child"))
+        .withMessage("child with the same identity already exists");
   }
 
   @Test
   void aggregateShouldRejectMutationOfUnownedChild() {
-    TestRepositoryAggregate aggregate =
-        createAggregate();
+    TestRepositoryAggregate aggregate = createAggregate();
 
-    TestRepositoryChildId unknownChildId =
-        new TestRepositoryChildId(UUID.randomUUID());
+    TestRepositoryChildId unknownChildId = new TestRepositoryChildId(UUID.randomUUID());
 
     assertThatIllegalArgumentException()
-        .isThrownBy(
-            () ->
-                aggregate.updateChildDescription(
-                    unknownChildId,
-                    "Updated description"))
-        .withMessage(
-            "child does not belong to aggregate");
+        .isThrownBy(() -> aggregate.updateChildDescription(unknownChildId, "Updated description"))
+        .withMessage("child does not belong to aggregate");
   }
 
   @Test
   void aggregateShouldReturnImmutableChildCollection() {
-    TestRepositoryAggregate aggregate =
-        createAggregate();
+    TestRepositoryAggregate aggregate = createAggregate();
 
-    aggregate.addChild(
-        new TestRepositoryChildId(UUID.randomUUID()),
-        "Primary child");
+    aggregate.addChild(new TestRepositoryChildId(UUID.randomUUID()), "Primary child");
 
-    assertThat(aggregate.children())
-        .isUnmodifiable();
+    assertThat(aggregate.children()).isUnmodifiable();
   }
 
   @Test
@@ -147,12 +107,9 @@ void childEntityShouldNotBeAnAggregateRoot() {
     assertThat(TestAggregateRepository.class.getDeclaredMethods())
         .allSatisfy(
             method -> {
-              assertThat(
-                      Arrays.asList(method.getParameterTypes()))
+              assertThat(Arrays.asList(method.getParameterTypes()))
                   .doesNotContain(
-                      TestRepositoryChild.class,
-                      TestRepositoryChildId.class,
-                      DomainEvent.class);
+                      TestRepositoryChild.class, TestRepositoryChildId.class, DomainEvent.class);
             });
   }
 
@@ -169,21 +126,16 @@ void childEntityShouldNotBeAnAggregateRoot() {
 
   @Test
   void noRepositoryShouldBeDeclaredForChildEntity() {
-    assertThat(
-            repositoryClassesDeclaredInFixture())
-        .containsExactly(TestAggregateRepository.class);
+    assertThat(repositoryClassesDeclaredInFixture()).containsExactly(TestAggregateRepository.class);
   }
 
   private TestRepositoryAggregate createAggregate() {
     return new TestRepositoryAggregate(
         new TestRepositoryAggregateId(UUID.randomUUID()),
-        new TestRepositoryLookupKey(
-            "ownership@example.com"));
+        new TestRepositoryLookupKey("ownership@example.com"));
   }
 
   private Class<?>[] repositoryClassesDeclaredInFixture() {
-    return new Class<?>[] {
-      TestAggregateRepository.class
-    };
+    return new Class<?>[] {TestAggregateRepository.class};
   }
 }

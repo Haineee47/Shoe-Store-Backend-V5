@@ -21,8 +21,7 @@ public final class InMemoryTestAggregateRepository implements TestAggregateRepos
       new LinkedHashMap<>();
 
   @Override
-  public Optional<TestRepositoryAggregate> findById(
-      TestRepositoryAggregateId aggregateId) {
+  public Optional<TestRepositoryAggregate> findById(TestRepositoryAggregateId aggregateId) {
 
     Objects.requireNonNull(aggregateId, "aggregateId must not be null");
 
@@ -30,8 +29,7 @@ public final class InMemoryTestAggregateRepository implements TestAggregateRepos
   }
 
   @Override
-  public Optional<TestRepositoryAggregate> findByLookupKey(
-      TestRepositoryLookupKey lookupKey) {
+  public Optional<TestRepositoryAggregate> findByLookupKey(TestRepositoryLookupKey lookupKey) {
 
     Objects.requireNonNull(lookupKey, "lookupKey must not be null");
 

@@ -6,9 +6,7 @@ import java.util.Optional;
 
 public interface TestApplicationProductRepository {
 
-  Optional<TestApplicationProduct> findById(
-      TestApplicationProductId productId);
+  Optional<TestApplicationProduct> findById(TestApplicationProductId productId);
 
-  TestApplicationProduct save(
-      TestApplicationProduct product);
+  TestApplicationProduct save(TestApplicationProduct product);
 }

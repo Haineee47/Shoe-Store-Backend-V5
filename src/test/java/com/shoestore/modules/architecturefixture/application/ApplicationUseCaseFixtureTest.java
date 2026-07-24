@@ -17,23 +17,17 @@ class ApplicationUseCaseFixtureTest {
   @Test
   void shouldLoadAggregateInvokeDomainBehaviorSaveAndReturnResult() {
 
-    TestApplicationProductId productId =
-        new TestApplicationProductId(UUID.randomUUID());
+    TestApplicationProductId productId = new TestApplicationProductId(UUID.randomUUID());
 
-    TestApplicationProduct product =
-        new TestApplicationProduct(productId, false);
+    TestApplicationProduct product = new TestApplicationProduct(productId, false);
 
-    InMemoryTestProductRepository repository =
-        new InMemoryTestProductRepository();
+    InMemoryTestProductRepository repository = new InMemoryTestProductRepository();
 
     repository.save(product);
 
-    ActivateTestProductUseCase useCase =
-        new ActivateTestProductUseCase(repository);
+    ActivateTestProductUseCase useCase = new ActivateTestProductUseCase(repository);
 
-    ActivateTestProductResult result =
-        useCase.execute(
-            new ActivateTestProductCommand(productId));
+    ActivateTestProductResult result = useCase.execute(new ActivateTestProductCommand(productId));
 
     assertThat(result.productId()).isEqualTo(productId);
     assertThat(result.active()).isTrue();
@@ -48,8 +42,7 @@ class ApplicationUseCaseFixtureTest {
   @Test
   void shouldRejectNullRepositoryDependency() {
 
-    assertThatThrownBy(
-            () -> new ActivateTestProductUseCase(null))
+    assertThatThrownBy(() -> new ActivateTestProductUseCase(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("productRepository must not be null");
   }
@@ -58,8 +51,7 @@ class ApplicationUseCaseFixtureTest {
   void shouldRejectNullCommand() {
 
     ActivateTestProductUseCase useCase =
-        new ActivateTestProductUseCase(
-            new InMemoryTestProductRepository());
+        new ActivateTestProductUseCase(new InMemoryTestProductRepository());
 
     assertThatThrownBy(() -> useCase.execute(null))
         .isInstanceOf(NullPointerException.class)
@@ -70,16 +62,11 @@ class ApplicationUseCaseFixtureTest {
   void shouldRejectMissingAggregate() {
 
     ActivateTestProductUseCase useCase =
-        new ActivateTestProductUseCase(
-            new InMemoryTestProductRepository());
+        new ActivateTestProductUseCase(new InMemoryTestProductRepository());
 
-    TestApplicationProductId productId =
-        new TestApplicationProductId(UUID.randomUUID());
+    TestApplicationProductId productId = new TestApplicationProductId(UUID.randomUUID());
 
-    assertThatThrownBy(
-            () ->
-                useCase.execute(
-                    new ActivateTestProductCommand(productId)))
+    assertThatThrownBy(() -> useCase.execute(new ActivateTestProductCommand(productId)))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("product was not found");
   }

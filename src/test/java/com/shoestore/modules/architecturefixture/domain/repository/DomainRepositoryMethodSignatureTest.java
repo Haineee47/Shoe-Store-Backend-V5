@@ -67,11 +67,7 @@ class DomainRepositoryMethodSignatureTest {
   void repositoryShouldExposeOnlyApprovedBusinessSpecificMethods() {
     assertThat(TestAggregateRepository.class.getDeclaredMethods())
         .extracting(Method::getName)
-        .containsExactlyInAnyOrder(
-            "findById",
-            "findByLookupKey",
-            "existsByLookupKey",
-            "save");
+        .containsExactlyInAnyOrder("findById", "findByLookupKey", "existsByLookupKey", "save");
   }
 
   @Test
@@ -82,22 +78,16 @@ class DomainRepositoryMethodSignatureTest {
   }
 
   @Test
-  void findByIdShouldUseTypedIdentityAndReturnOptionalAggregate()
-      throws NoSuchMethodException {
+  void findByIdShouldUseTypedIdentityAndReturnOptionalAggregate() throws NoSuchMethodException {
 
     Method method =
         TestAggregateRepository.class.getDeclaredMethod(
-            "findById",
-            TestRepositoryAggregateId.class);
+            "findById", TestRepositoryAggregateId.class);
 
-    assertThat(method.getParameterTypes())
-        .containsExactly(TestRepositoryAggregateId.class);
+    assertThat(method.getParameterTypes()).containsExactly(TestRepositoryAggregateId.class);
 
     assertThat(method.getGenericReturnType())
-        .isEqualTo(
-            parameterizedType(
-                Optional.class,
-                TestRepositoryAggregate.class));
+        .isEqualTo(parameterizedType(Optional.class, TestRepositoryAggregate.class));
   }
 
   @Test
@@ -106,17 +96,12 @@ class DomainRepositoryMethodSignatureTest {
 
     Method method =
         TestAggregateRepository.class.getDeclaredMethod(
-            "findByLookupKey",
-            TestRepositoryLookupKey.class);
+            "findByLookupKey", TestRepositoryLookupKey.class);
 
-    assertThat(method.getParameterTypes())
-        .containsExactly(TestRepositoryLookupKey.class);
+    assertThat(method.getParameterTypes()).containsExactly(TestRepositoryLookupKey.class);
 
     assertThat(method.getGenericReturnType())
-        .isEqualTo(
-            parameterizedType(
-                Optional.class,
-                TestRepositoryAggregate.class));
+        .isEqualTo(parameterizedType(Optional.class, TestRepositoryAggregate.class));
   }
 
   @Test
@@ -125,51 +110,36 @@ class DomainRepositoryMethodSignatureTest {
 
     Method method =
         TestAggregateRepository.class.getDeclaredMethod(
-            "existsByLookupKey",
-            TestRepositoryLookupKey.class);
+            "existsByLookupKey", TestRepositoryLookupKey.class);
 
-    assertThat(method.getParameterTypes())
-        .containsExactly(TestRepositoryLookupKey.class);
+    assertThat(method.getParameterTypes()).containsExactly(TestRepositoryLookupKey.class);
 
     assertThat(method.getReturnType()).isEqualTo(boolean.class);
   }
 
   @Test
-  void saveShouldAcceptAndReturnTheAggregateRoot()
-      throws NoSuchMethodException {
+  void saveShouldAcceptAndReturnTheAggregateRoot() throws NoSuchMethodException {
 
     Method method =
-        TestAggregateRepository.class.getDeclaredMethod(
-            "save",
-            TestRepositoryAggregate.class);
+        TestAggregateRepository.class.getDeclaredMethod("save", TestRepositoryAggregate.class);
 
-    assertThat(method.getParameterTypes())
-        .containsExactly(TestRepositoryAggregate.class);
+    assertThat(method.getParameterTypes()).containsExactly(TestRepositoryAggregate.class);
 
-    assertThat(method.getReturnType())
-        .isEqualTo(TestRepositoryAggregate.class);
+    assertThat(method.getReturnType()).isEqualTo(TestRepositoryAggregate.class);
 
-    assertThat(AggregateRoot.class)
-        .isAssignableFrom(method.getParameterTypes()[0]);
+    assertThat(AggregateRoot.class).isAssignableFrom(method.getParameterTypes()[0]);
 
-    assertThat(AggregateRoot.class)
-        .isAssignableFrom(method.getReturnType());
+    assertThat(AggregateRoot.class).isAssignableFrom(method.getReturnType());
   }
 
   @Test
   void repositoryShouldNotUseRawIdentityOrLookupRepresentations() {
     List<Class<?>> exposedRawTypes =
         Arrays.stream(TestAggregateRepository.class.getDeclaredMethods())
-            .flatMap(
-                method ->
-                    Arrays.stream(method.getParameterTypes()))
+            .flatMap(method -> Arrays.stream(method.getParameterTypes()))
             .toList();
 
-    assertThat(exposedRawTypes)
-        .doesNotContain(
-            UUID.class,
-            String.class,
-            Object.class);
+    assertThat(exposedRawTypes).doesNotContain(UUID.class, String.class, Object.class);
   }
 
   @Test
@@ -177,16 +147,12 @@ class DomainRepositoryMethodSignatureTest {
     assertThat(TestAggregateRepository.class.getDeclaredMethods())
         .allSatisfy(
             method -> {
-              assertAllowedType(
-                  method.getGenericReturnType(),
-                  method.getName() + " return type");
+              assertAllowedType(method.getGenericReturnType(), method.getName() + " return type");
 
               Arrays.stream(method.getGenericParameterTypes())
                   .forEach(
                       parameterType ->
-                          assertAllowedType(
-                              parameterType,
-                              method.getName() + " parameter type"));
+                          assertAllowedType(parameterType, method.getName() + " parameter type"));
             });
   }
 
@@ -196,15 +162,13 @@ class DomainRepositoryMethodSignatureTest {
         .allSatisfy(
             method -> {
               assertDomainRepositoryType(
-                  method.getGenericReturnType(),
-                  method.getName() + " return type");
+                  method.getGenericReturnType(), method.getName() + " return type");
 
               Arrays.stream(method.getGenericParameterTypes())
                   .forEach(
                       parameterType ->
                           assertDomainRepositoryType(
-                              parameterType,
-                              method.getName() + " parameter type"));
+                              parameterType, method.getName() + " parameter type"));
             });
   }
 
@@ -222,8 +186,7 @@ class DomainRepositoryMethodSignatureTest {
 
   private boolean containsForbiddenType(Type type) {
     if (type instanceof Class<?> typeClass) {
-      return FORBIDDEN_TYPE_PREFIXES.stream()
-          .anyMatch(typeClass.getName()::startsWith);
+      return FORBIDDEN_TYPE_PREFIXES.stream().anyMatch(typeClass.getName()::startsWith);
     }
 
     if (type instanceof ParameterizedType parameterizedType) {
@@ -236,20 +199,16 @@ class DomainRepositoryMethodSignatureTest {
     }
 
     if (type instanceof GenericArrayType genericArrayType) {
-      return containsForbiddenType(
-          genericArrayType.getGenericComponentType());
+      return containsForbiddenType(genericArrayType.getGenericComponentType());
     }
 
     if (type instanceof WildcardType wildcardType) {
-      return Arrays.stream(wildcardType.getUpperBounds())
-              .anyMatch(this::containsForbiddenType)
-          || Arrays.stream(wildcardType.getLowerBounds())
-              .anyMatch(this::containsForbiddenType);
+      return Arrays.stream(wildcardType.getUpperBounds()).anyMatch(this::containsForbiddenType)
+          || Arrays.stream(wildcardType.getLowerBounds()).anyMatch(this::containsForbiddenType);
     }
 
     if (type instanceof TypeVariable<?> typeVariable) {
-      return Arrays.stream(typeVariable.getBounds())
-          .anyMatch(this::containsForbiddenType);
+      return Arrays.stream(typeVariable.getBounds()).anyMatch(this::containsForbiddenType);
     }
 
     return false;
@@ -263,8 +222,7 @@ class DomainRepositoryMethodSignatureTest {
 
       String typeName = typeClass.getName();
 
-      return typeName.startsWith("java.")
-          || typeName.startsWith(DOMAIN_PACKAGE_PREFIX);
+      return typeName.startsWith("java.") || typeName.startsWith(DOMAIN_PACKAGE_PREFIX);
     }
 
     if (type instanceof ParameterizedType parameterizedType) {
@@ -274,8 +232,7 @@ class DomainRepositoryMethodSignatureTest {
     }
 
     if (type instanceof GenericArrayType genericArrayType) {
-      return isAllowedDomainRepositoryType(
-          genericArrayType.getGenericComponentType());
+      return isAllowedDomainRepositoryType(genericArrayType.getGenericComponentType());
     }
 
     if (type instanceof WildcardType wildcardType) {
@@ -286,74 +243,64 @@ class DomainRepositoryMethodSignatureTest {
     }
 
     if (type instanceof TypeVariable<?> typeVariable) {
-      return Arrays.stream(typeVariable.getBounds())
-          .allMatch(this::isAllowedDomainRepositoryType);
+      return Arrays.stream(typeVariable.getBounds()).allMatch(this::isAllowedDomainRepositoryType);
     }
 
     return false;
   }
 
-  private ParameterizedType parameterizedType(
-      Class<?> rawType,
-      Class<?> typeArgument) {
+  private ParameterizedType parameterizedType(Class<?> rawType, Class<?> typeArgument) {
 
-    return new ExpectedParameterizedType(
-        rawType,
-        new Type[] {typeArgument});
+    return new ExpectedParameterizedType(rawType, new Type[] {typeArgument});
   }
 
-  private record ExpectedParameterizedType(
-    Type rawType,
-    Type[] actualTypeArguments)
-    implements ParameterizedType {
+  private record ExpectedParameterizedType(Type rawType, Type[] actualTypeArguments)
+      implements ParameterizedType {
 
-  private ExpectedParameterizedType {
-    actualTypeArguments = actualTypeArguments.clone();
-  }
-
-  @Override
-  public Type[] getActualTypeArguments() {
-    return actualTypeArguments.clone();
-  }
-
-  @Override
-  public Type getRawType() {
-    return rawType;
-  }
-
-  @Override
-  public Type getOwnerType() {
-    return null;
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    if (!(other instanceof ParameterizedType parameterizedType)) {
-      return false;
+    private ExpectedParameterizedType {
+      actualTypeArguments = actualTypeArguments.clone();
     }
 
-    return rawType.equals(parameterizedType.getRawType())
-        && Arrays.equals(
-            actualTypeArguments,
-            parameterizedType.getActualTypeArguments())
-        && parameterizedType.getOwnerType() == null;
-  }
+    @Override
+    public Type[] getActualTypeArguments() {
+      return actualTypeArguments.clone();
+    }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(actualTypeArguments)
-        ^ rawType.hashCode();
-  }
+    @Override
+    public Type getRawType() {
+      return rawType;
+    }
 
-  @Override
-  public String getTypeName() {
-    return rawType.getTypeName()
-        + "<"
-        + Arrays.stream(actualTypeArguments)
-            .map(Type::getTypeName)
-            .reduce((left, right) -> left + ", " + right)
-            .orElse("")
-        + ">";
+    @Override
+    public Type getOwnerType() {
+      return null;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (!(other instanceof ParameterizedType parameterizedType)) {
+        return false;
+      }
+
+      return rawType.equals(parameterizedType.getRawType())
+          && Arrays.equals(actualTypeArguments, parameterizedType.getActualTypeArguments())
+          && parameterizedType.getOwnerType() == null;
+    }
+
+    @Override
+    public int hashCode() {
+      return Arrays.hashCode(actualTypeArguments) ^ rawType.hashCode();
+    }
+
+    @Override
+    public String getTypeName() {
+      return rawType.getTypeName()
+          + "<"
+          + Arrays.stream(actualTypeArguments)
+              .map(Type::getTypeName)
+              .reduce((left, right) -> left + ", " + right)
+              .orElse("")
+          + ">";
+    }
   }
-}
 }
