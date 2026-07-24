@@ -1,4 +1,4 @@
-package com.shoestore.modules.architecturefixture.domain.repository;
+package com.shoestore.modules.architecturefixture.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
